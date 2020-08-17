@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -20,7 +21,7 @@ import javax.sql.DataSource;
  * 配置multi数据源的SQLsession
  */
 @Configuration
-@MapperScan(basePackages = {"com.xiyu.dao.mapper.multi"})
+@MapperScan(basePackages = {"com.xiyu.dao.mapper.multi"}, sqlSessionFactoryRef = "multiSqlSessionFactory")
 @Slf4j
 public class MultiMybatisConfig {
 
@@ -48,5 +49,10 @@ public class MultiMybatisConfig {
             log.error("fail to init MyBatis sqlSessionFactory!", e);
         }
         return sqlSessionFactory;
+    }
+
+    @Bean(name = "multiTransactionManager")
+    public DataSourceTransactionManager qkTransactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 }
